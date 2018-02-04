@@ -1,12 +1,16 @@
 <?php
-///include("db_config.php");
+include("db_config.php");
 
-$challenge = $_REQUEST['hub_challenge'];
-$verify_token = $_REQUEST['hub_verify_token'];
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-if ($verify_token === 'abc123') {
-echo $challenge;
-}
+// $challenge = $_REQUEST['hub_challenge'];
+// $verify_token = $_REQUEST['hub_verify_token'];
+
+// if ($verify_token === 'abc123') {
+//   echo $challenge;
+// }
 
 //echo $res;
 error_log(file_get_contents('php://input'));
@@ -17,6 +21,7 @@ error_log(print_r($input, true));
 //print_r($input);
 
 foreach ($input['entry'] as $entry) {
+  $form_id = $entry['id'];
   foreach ($entry['changes'] as $change) {
     if($change['field'] == "leadgen"){
       $details = $change['value'];
@@ -24,21 +29,47 @@ foreach ($input['entry'] as $entry) {
       $leadgen_id = $details['leadgen_id'];
       $form_id = $details['form_id'];
 
-      // $sth = $dbh->prepare("SELECT long_token FROM tokens WHERE page_id = :page_id");
-      // $sth->execute(array("page_id" => $page_id));
-      // $access_token = $sth->fetchColumn();
+      $sth = $pdo->prepare("SELECT long_token FROM tokens WHERE page_id = :page_id");
+      $sth->execute(array("page_id" => $page_id));
+      $access_token = $sth->fetchColumn();
 
-      $access_token = "EAAdWelVHOgYBAMQEqktMZBlBQptFqdmamTWYF4yZCFwRSvVnozZAJLcrzCwgPwzNR4ZBMffofh8CZCmcGzSTpeDUBMmKzzGB4Ay2y8xOHLg8sh4tKZAAB0TB7E7hfUeEiVBeIZAR34HWLLvDmLMDkhmaqxklXPZCdr2aq5fj2Jk9zMdH2nVG96wpVK6ghMmsLXp2jJq5Y3ix8AZDZD";
-      $url = "https://graph.facebook.com/v2.11/{$form_id}?fields=name,qualifiers&access_token=". $access_token;
-
+      $url = "https://graph.facebook.com/v2.11/{$leadgen_id}?access_token=". $access_token;
       $ch = curl_init();
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
       curl_setopt($ch, CURLOPT_URL, $url);
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
       $res = curl_exec ($ch);
       curl_close ($ch);
-      error_log($res);
+      $data = json_decode($res, true);
 
-      error_log(print_r($details, true));
+      // Get form details e.g. name
+      $url = "https://graph.facebook.com/v2.11/{$form_id}?access_token=". $access_token;
+      $ch = curl_init();
+      curl_setopt($ch, CURLOPT_URL, $url);
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+      $response = curl_exec ($ch);
+      curl_close ($ch);
+      $form_name = json_decode($response, true)['name'];
+
+      $fields = array();
+
+      foreach($data['field_data'] as $field){
+        $fields[$field['name']] = $field['values'][0];
+      }
+
+      $statement = $pdo->prepare("INSERT INTO lead_data(id, page_id, form_name, first_name, last_name, phone, email)
+        VALUES(:id, :page_id, :form_name, :first_name, :last_name, :phone, :email)");
+      $statement->execute(array(
+        "id" => $data['id'],
+        "page_id" => $page_id,
+        "form_name" => $form_name,
+        "first_name" => (array_key_exists("first_name", $fields)) ? $fields['first_name'] : "",
+        "last_name" => (array_key_exists("last_name", $fields)) ? $fields['last_name'] : "",
+        "email" => (array_key_exists("email", $fields)) ? $fields['email'] : "",
+        "phone" => (array_key_exists("phone_number", $fields)) ? $fields['phone_number'] : ""
+      ));
+
+      print_r($fields);
+
     }
   }
 }
