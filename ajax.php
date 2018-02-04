@@ -1,7 +1,7 @@
 <?php
 include("db_config.php");
-$app_id = "787285801459961";
-$app_secret = "effabaa172c84d52fccd5b6731c2bbc2";
+$app_id = "2065408253704710";
+$app_secret = "e813d57562d4d5679f27d2c411310762";
 
 $action = $_REQUEST['action'];
 

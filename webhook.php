@@ -8,7 +8,7 @@ echo $challenge;
 }
 
 $leadgen_id = "2134001436835979";
-$url = "https://graph.facebook.com/v2.11/{$leadgen_id}";
+$url = "https://graph.facebook.com/v2.11/2134001436835979";
 
 
 $ch = curl_init();
@@ -21,13 +21,13 @@ curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 $res = curl_exec ($ch);
 curl_close ($ch);
 
-echo $res;
+//echo $res;
 
 $input = json_decode(file_get_contents('php://input'), true);
 error_log(print_r($input, true));
 
 // Get lead information.
-print_r($input);
+//print_r($input);
 
 foreach ($input['entry'] as $entry) {
   foreach ($entry['changes'] as $change) {
