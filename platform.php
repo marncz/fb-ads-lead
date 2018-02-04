@@ -33,12 +33,19 @@
   function myFacebookLogin() {
     FB.login(function(response){
       console.log('Successfully logged in', response);
+
       FB.api('/me/accounts', function(response) {
         console.log('Successfully retrieved pages', response);
         var pages = response.data;
         var ul = document.getElementById('list');
         for (var i = 0, len = pages.length; i < len; i++) {
           var page = pages[i];
+          
+          var xhttp = new XMLHttpRequest();
+          xhttp.open("POST", "ajax.php?action=getLongLivedToken", true);
+          xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+          xhttp.send("token=" + page.access_token + "&page_id=" + page.id);
+
           var li = document.createElement('li');
           var a = document.createElement('a');
           a.href = "#";
