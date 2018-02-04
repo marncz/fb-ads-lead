@@ -24,11 +24,11 @@ foreach ($input['entry'] as $entry) {
       $leadgen_id = $details['leadgen_id'];
       $form_id = $details['form_id'];
 
-      $sth = $dbh->prepare("SELECT long_token FROM tokens WHERE page_id = :page_id");
-      $sth->execute(array("page_id" => $page_id));
-      $access_token = $sth->fetchColumn();
+      // $sth = $dbh->prepare("SELECT long_token FROM tokens WHERE page_id = :page_id");
+      // $sth->execute(array("page_id" => $page_id));
+      // $access_token = $sth->fetchColumn();
 
-      // $access_token = "EAAdWelVHOgYBAMQEqktMZBlBQptFqdmamTWYF4yZCFwRSvVnozZAJLcrzCwgPwzNR4ZBMffofh8CZCmcGzSTpeDUBMmKzzGB4Ay2y8xOHLg8sh4tKZAAB0TB7E7hfUeEiVBeIZAR34HWLLvDmLMDkhmaqxklXPZCdr2aq5fj2Jk9zMdH2nVG96wpVK6ghMmsLXp2jJq5Y3ix8AZDZD";
+      $access_token = "EAAdWelVHOgYBAMQEqktMZBlBQptFqdmamTWYF4yZCFwRSvVnozZAJLcrzCwgPwzNR4ZBMffofh8CZCmcGzSTpeDUBMmKzzGB4Ay2y8xOHLg8sh4tKZAAB0TB7E7hfUeEiVBeIZAR34HWLLvDmLMDkhmaqxklXPZCdr2aq5fj2Jk9zMdH2nVG96wpVK6ghMmsLXp2jJq5Y3ix8AZDZD";
       $url = "https://graph.facebook.com/v2.11/{$form_id}?fields=name,qualifiers&access_token=". $access_token;
 
       $ch = curl_init();
