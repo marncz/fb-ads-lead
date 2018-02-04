@@ -3,7 +3,7 @@
 <script>
   window.fbAsyncInit = function() {
     FB.init({
-      appId      : '2065408253704710',
+      appId      : '787285801459961',
       xfbml      : true,
       version    : 'v2.12'
     });
@@ -40,7 +40,6 @@
         var ul = document.getElementById('list');
         for (var i = 0, len = pages.length; i < len; i++) {
           var page = pages[i];
-          
           var xhttp = new XMLHttpRequest();
           xhttp.open("POST", "ajax.php?action=getLongLivedToken", true);
           xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
