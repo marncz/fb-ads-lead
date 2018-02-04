@@ -7,20 +7,6 @@ if ($verify_token === 'abc123') {
 echo $challenge;
 }
 
-$leadgen_id = "2134001436835979";
-$url = "https://graph.facebook.com/v2.11/2134001436835979";
-
-
-$ch = curl_init();
-
-curl_setopt($ch, CURLOPT_URL, $url);
-curl_setopt($ch, CURLOPT_POST, 1);
-curl_setopt($ch, CURLOPT_POSTFIELDS,
-            "access_token=EAALMCEKIYPkBAAloNQPvJchK08ojZBDXNg2wH0MAu3utdwraZBvrY4g8OCJPlUPCyGfW8tUkUZBGRZCAXorpvVsJqSddVIzRn5XUx5aUghnYLYZCZA2JOMvb5CSasYMaQj2ccw1pQyHmzezpimotc16SfZCxmvDI6oUAwils2e1alRqacKRZAV4IlqKZCsAx1dxWMKcPcrHCAjgZDZD");
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-$res = curl_exec ($ch);
-curl_close ($ch);
-
 //echo $res;
 
 $input = json_decode(file_get_contents('php://input'), true);
@@ -35,6 +21,17 @@ foreach ($input['entry'] as $entry) {
       $details = $change['value'];
       $page_id = $details['page_id'];
       $leadgen_id = $details['leadgen_id'];
+      $form_id = $details['form_id'];
+
+      $access_token = "EAAdWelVHOgYBAMQEqktMZBlBQptFqdmamTWYF4yZCFwRSvVnozZAJLcrzCwgPwzNR4ZBMffofh8CZCmcGzSTpeDUBMmKzzGB4Ay2y8xOHLg8sh4tKZAAB0TB7E7hfUeEiVBeIZAR34HWLLvDmLMDkhmaqxklXPZCdr2aq5fj2Jk9zMdH2nVG96wpVK6ghMmsLXp2jJq5Y3ix8AZDZD"
+      $url = "https://graph.facebook.com/v2.11/{$form_id}?fields=name,qualifiers&access_token=". $access_token;
+
+      $ch = curl_init();
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+      curl_setopt($ch, CURLOPT_URL, $url);
+      $res = curl_exec ($ch);
+      curl_close ($ch);
+      error_log($res);
 
       error_log(print_r($details, true));
     }
