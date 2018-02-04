@@ -1,5 +1,5 @@
 <?php
-include("db_config.php");
+///include("db_config.php");
 
 $challenge = $_REQUEST['hub_challenge'];
 $verify_token = $_REQUEST['hub_verify_token'];
